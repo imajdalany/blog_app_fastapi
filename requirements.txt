@@ -5,3 +5,4 @@ sqlalchemy
 passlib
 pyjwt
 python-multipart
+pydantic-settings

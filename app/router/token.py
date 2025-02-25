@@ -1,11 +1,11 @@
 import jwt
 from jwt.exceptions import InvalidTokenError
 from datetime import timedelta, timezone, datetime
-from typing import Annotated
-from fastapi import Depends, HTTPException
-from app import schemas, oauth2
+from fastapi import HTTPException
+from app import schemas
+from app.pydantic_settings import settings
 
-SECRET_KEY = "b641627e07bff701a4d0b8b4684874d1a32c16926181595c2bb918289a73ff0d"
+SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
