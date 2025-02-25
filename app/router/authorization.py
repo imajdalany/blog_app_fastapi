@@ -6,11 +6,13 @@ from app import hashing
 from . import token
 from datetime import timedelta
 from fastapi.security import OAuth2PasswordRequestForm
+from app.logging import timed
 
 router = APIRouter(tags=["Authorization"])
 
 
 @router.post("/login")
+@timed
 def login(login: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = db.query(models.User).filter_by(username=login.username).first()
 

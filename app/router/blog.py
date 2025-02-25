@@ -1,10 +1,12 @@
-from fastapi import Depends, status, HTTPException, APIRouter
-from app import models, schemas
+from fastapi import Depends, status, APIRouter
+from app import schemas
 from app.database import get_db
 from sqlalchemy.orm import Session
 from typing import List
 from app.repository import blog_logic
 from app.oauth2 import get_current_user
+from app.logging import timed
+
 
 router = APIRouter(
     prefix="/blog",
@@ -17,6 +19,7 @@ router = APIRouter(
     status_code=status.HTTP_201_CREATED,
     response_model=schemas.ShowBlog,
 )
+@timed
 def create_blog(
     blog: schemas.Blog,
     db: Session = Depends(get_db),
@@ -30,6 +33,7 @@ def create_blog(
     status_code=status.HTTP_200_OK,
     response_model=List[schemas.ShowBlog],
 )
+@timed
 def get_all_blogs(
     db: Session = Depends(get_db),
     get_current_user: schemas.User = Depends(get_current_user),
@@ -42,6 +46,7 @@ def get_all_blogs(
     status_code=status.HTTP_200_OK,
     response_model=schemas.ShowBlog,
 )
+@timed
 def get_blog_by_id(
     ID: int,
     db: Session = Depends(get_db),
@@ -51,6 +56,7 @@ def get_blog_by_id(
 
 
 @router.delete("/{ID}", status_code=status.HTTP_200_OK)
+@timed
 def delete_blog_by_id(
     ID: int,
     db: Session = Depends(get_db),
@@ -60,6 +66,7 @@ def delete_blog_by_id(
 
 
 @router.put("/{ID}", status_code=status.HTTP_202_ACCEPTED)
+@timed
 def update_blog_by_id(
     ID: int,
     blog: schemas.Blog,
