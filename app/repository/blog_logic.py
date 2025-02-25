@@ -21,8 +21,14 @@ def get_blog_by_id(ID: int, db: Session = Depends(get_db)):
     return blog
 
 
-def create_blog(blog: schemas.Blog, db: Session = Depends(get_db)):
-    new_blog = models.Blog(title=blog.title, body=blog.body, user_id=1)
+def create_blog(
+    blog: schemas.Blog,
+    current_username: str,
+    db: Session = Depends(get_db),
+):
+    current_id = db.query(models.User).filter_by(username=current_username).first().id
+
+    new_blog = models.Blog(title=blog.title, body=blog.body, user_id=current_id)
     db.add(new_blog)
     db.commit()
     db.refresh(new_blog)

@@ -25,7 +25,11 @@ def create_blog(
     db: Session = Depends(get_db),
     get_current_user: schemas.User = Depends(get_current_user),
 ):
-    return blog_logic.create_blog(blog, db)
+    return blog_logic.create_blog(
+        blog,
+        get_current_user.username,
+        db,
+    )
 
 
 @router.get(
