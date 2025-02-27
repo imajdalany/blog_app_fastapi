@@ -6,6 +6,10 @@ from typing import List
 from app.repository import blog_logic
 from app.oauth2 import get_current_user
 from app.logging import timed
+from typing import Annotated
+
+database_dependency = Annotated[Session, Depends(get_db)]
+current_user_dependency = Annotated[schemas.User, Depends(get_current_user)]
 
 
 router = APIRouter(
@@ -22,8 +26,8 @@ router = APIRouter(
 @timed
 def create_blog(
     blog: schemas.Blog,
-    db: Session = Depends(get_db),
-    get_current_user: schemas.User = Depends(get_current_user),
+    db: database_dependency,
+    get_current_user: current_user_dependency,
 ):
     return blog_logic.create_blog(
         blog,
@@ -39,8 +43,8 @@ def create_blog(
 )
 @timed
 def get_all_blogs(
-    db: Session = Depends(get_db),
-    get_current_user: schemas.User = Depends(get_current_user),
+    db: database_dependency,
+    get_current_user: current_user_dependency,
 ):
     return blog_logic.get_all_blogs(db)
 
@@ -53,8 +57,8 @@ def get_all_blogs(
 @timed
 def get_blog_by_id(
     ID: int,
-    db: Session = Depends(get_db),
-    get_current_user: schemas.User = Depends(get_current_user),
+    db: database_dependency,
+    get_current_user: current_user_dependency,
 ):
     return blog_logic.get_blog_by_id(ID, db)
 
@@ -63,8 +67,8 @@ def get_blog_by_id(
 @timed
 def delete_blog_by_id(
     ID: int,
-    db: Session = Depends(get_db),
-    get_current_user: schemas.User = Depends(get_current_user),
+    db: database_dependency,
+    get_current_user: current_user_dependency,
 ):
     return blog_logic.delete_blog_by_id(ID, db)
 
@@ -74,7 +78,7 @@ def delete_blog_by_id(
 def update_blog_by_id(
     ID: int,
     blog: schemas.Blog,
-    db: Session = Depends(get_db),
-    get_current_user: schemas.User = Depends(get_current_user),
+    db: database_dependency,
+    get_current_user: current_user_dependency,
 ):
     return blog_logic.update_blog_by_id(ID, blog, db)

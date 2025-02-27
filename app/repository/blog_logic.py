@@ -2,14 +2,17 @@ from fastapi import Depends, HTTPException, status
 from app import models, schemas
 from app.database import get_db
 from sqlalchemy.orm import Session
+from typing import Annotated
+
+database_dependency = Annotated[Session, Depends(get_db)]
 
 
-def get_all_blogs(db: Session = Depends(get_db)):
+def get_all_blogs(db: database_dependency):
     blogs = db.query(models.Blog).all()
     return blogs
 
 
-def get_blog_by_id(ID: int, db: Session = Depends(get_db)):
+def get_blog_by_id(ID: int, db: database_dependency):
     blog = db.query(models.Blog).filter_by(id=ID).first()
 
     if not blog:
@@ -24,7 +27,7 @@ def get_blog_by_id(ID: int, db: Session = Depends(get_db)):
 def create_blog(
     blog: schemas.Blog,
     current_username: str,
-    db: Session = Depends(get_db),
+    db: database_dependency,
 ):
     current_id = db.query(models.User).filter_by(username=current_username).first().id
 
@@ -35,7 +38,7 @@ def create_blog(
     return new_blog
 
 
-def update_blog_by_id(ID: int, blog: schemas.Blog, db: Session = Depends(get_db)):
+def update_blog_by_id(ID: int, blog: schemas.Blog, db: database_dependency):
     blog_obj = db.query(models.Blog).filter_by(id=ID)
 
     if not blog_obj.first():
@@ -50,7 +53,7 @@ def update_blog_by_id(ID: int, blog: schemas.Blog, db: Session = Depends(get_db)
     return "updated successfully"
 
 
-def delete_blog_by_id(ID: int, db: Session = Depends(get_db)):
+def delete_blog_by_id(ID: int, db: database_dependency):
     blog_obj = db.query(models.Blog).filter_by(id=ID)
 
     if not blog_obj.first():
